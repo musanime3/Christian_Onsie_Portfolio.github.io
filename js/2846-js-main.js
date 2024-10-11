@@ -79,10 +79,21 @@
 		});
 
 	};
+	
 
 	onePageClick();
 	
-
+	var onePageClick = function() {
+		$(document).on('click', 'a[href^="#"]', function (event) {
+			event.preventDefault();
+			var href = $.attr(this, 'href');
+			$('html, body').animate({
+				scrollTop: $($.attr(this, 'href')).offset().top - 70 // adjust -70 as needed for fixed navbar height
+			}, 500);
+		});
+	};
+	onePageClick();
+	
 	var carousel = function() {
 		$('.home-slider').owlCarousel({
 	    loop:true,
@@ -172,36 +183,36 @@
 		});
 	};
 	scrollWindow();
-
+	var countdown = function() {
+		$('#section-counter, .hero-wrap, .ftco-counter, .ftco-about').waypoint(function(direction) {
+			if (direction === 'down' && !$(this.element).hasClass('ftco-animated')) {
+				$(this.element).addClass('ftco-animated'); // Prevent re-triggering
 	
-
-	var counter = function() {
-		
-		$('#section-counter, .hero-wrap, .ftco-counter, .ftco-about').waypoint( function( direction ) {
-
-			if( direction === 'down' && !$(this.element).hasClass('ftco-animated') ) {
-
-				var comma_separator_number_step = $.animateNumber.numberStepFactories.separator(',')
-				$('.number').each(function(){
+				$('.countdown').each(function() {
 					var $this = $(this),
-						num = $this.data('number');
-						console.log(num);
-					$this.animateNumber(
-					  {
-					    number: num,
-					    numberStep: comma_separator_number_step
-					  }, 7000
-					);
+						startNumber = $this.data('number'),  // Get the starting number
+						targetNumber = $this.data('target'), // Get the target number to stop
+						currentNumber = startNumber,
+						duration = 5000, // Total duration for countdown
+						decrement = (startNumber - targetNumber) / (duration / 100); // Calculate decrement step
+	
+					// Function to update the displayed number
+					var countdownInterval = setInterval(function() {
+						currentNumber -= decrement; // Decrement the current number
+						if (currentNumber <= targetNumber) {
+							clearInterval(countdownInterval); // Stop when reaching the target number
+							currentNumber = targetNumber; // Ensure it ends at the target number
+						}
+						$this.text(Math.round(currentNumber)); // Update the displayed number
+					}, 100); // Update every 100ms
 				});
-				
 			}
-
-		} , { offset: '95%' } );
-
-	}
-	counter();
-
-
+		}, { offset: '95%' });
+	};
+	
+	countdown(); // Call the countdown function to initialize
+	
+	
 	var contentWayPoint = function() {
 		var i = 0;
 		$('.ftco-animate').waypoint( function( direction ) {
